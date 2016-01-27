@@ -1,0 +1,49 @@
+{
+  "name": "extract-streetview",
+  "version": "1.0.0",
+  "description": "extract street view spherical images and depth information",
+  "main": "index.js",
+  "bin": {
+    "extract-streetview": "./cmd.js"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Matt DesLauriers",
+    "email": "dave.des@gmail.com",
+    "url": "https://github.com/mattdesl"
+  },
+  "dependencies": {
+    "awesome-streetview": "^1.4.2",
+    "electron-canvas-to-buffer": "^1.0.3",
+    "google-panorama-by-location": "^4.1.1",
+    "google-panorama-equirectangular": "^1.2.0",
+    "minimist": "^1.2.0"
+  },
+  "devDependencies": {
+    "devtool": "^1.7.1"
+  },
+  "scripts": {
+    "example": "node cmd.js 43.6473963,-79.3923407 -o image.png"
+  },
+  "keywords": [
+    "depth",
+    "street",
+    "view",
+    "extract",
+    "glsl",
+    "lat",
+    "long",
+    "latitude",
+    "longitude",
+    "streetview",
+    "google"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Jam3/extract-streetview.git"
+  },
+  "homepage": "https://github.com/Jam3/extract-streetview",
+  "bugs": {
+    "url": "https://github.com/Jam3/extract-streetview/issues"
+  }
+}
