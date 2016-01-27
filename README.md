@@ -16,6 +16,8 @@ Example of some output images:
 
 ## Install
 
+This tool uses Electron for proper interaction with the Google API, so it is fairly heavy (~100mb). Install with latest [npm](https://www.npmjs.com/).
+
 ```sh
 npm install extract-streetview -g
 ```
