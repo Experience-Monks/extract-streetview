@@ -16,11 +16,11 @@
     "awesome-streetview": "^1.4.2",
     "electron-canvas-to-buffer": "^1.0.3",
     "google-panorama-by-location": "^4.1.1",
+    "devtool": "^1.7.1",
     "google-panorama-equirectangular": "^1.2.0",
     "minimist": "^1.2.0"
   },
   "devDependencies": {
-    "devtool": "^1.7.1"
   },
   "scripts": {
     "example": "node cmd.js 43.6473963,-79.3923407 -o image.png"
