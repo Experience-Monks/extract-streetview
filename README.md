@@ -43,6 +43,9 @@ extract-streetview 43.6473963,-79.3923407 --source outdoor > panorama.png
 
 # random cool panorama
 extract-streetview -o image.png
+
+# geolocate to current position
+extract-streetview current -o myStreet.png
 ```
 
 ## Usage
@@ -64,6 +67,8 @@ Options:
 ```
 
 Extracts a street view panorama from `[ latitude, longitude ]` input (or `google.com/maps/` URL). If not specified, will extract a random [Awesome StreetView](https://github.com/Jam3/awesome-streetview). 
+
+You can also specify `"current"` as the location, and it will use the browser's geolocation API to determine your latitude/longitude.
 
 If no `--output` is given, the PNG is written to stdout.
 

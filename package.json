@@ -22,7 +22,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "example": "node cmd.js 43.6473963,-79.3923407 -o image.png"
+    "example": "node cmd.js 43.6473963,-79.3923407 -o image.png",
+    "dev": "NODE_ENV=development node cmd.js current -o image.png"
   },
   "keywords": [
     "depth",

@@ -21,19 +21,6 @@ var argv = require('minimist')(process.argv.slice(2), {
 });
 
 var outFile = absolute(argv.output);
-var latLon = argv._[0];
-if (latLon) {
-  // try to parse a URL
-  var regex = /(?:google\..*maps\/\@)([0-9\-\.]+)\,([0-9\-\.]+)/i;
-  var match = regex.exec(latLon);
-  if (match) {
-    latLon = [ match[1], match[2] ];
-  } else {
-    latLon = latLon.split(',').slice(0, 2).map(n => parseFloat(n));
-  }
-} else {
-  latLon = awesome();
-}
 
 var zoom = argv.zoom;
 if (zoom === 'max') {
@@ -42,25 +29,65 @@ if (zoom === 'max') {
   zoom = 1;
 }
 
-googlePano(latLon, function (err, result) {
-  if (err) throw err;
-  render(result.id, {
-    source: argv.source === 'outdoor'
-      ? google.maps.StreetViewSource.OUTDOOR
-      : google.maps.StreetViewSource.DEFAULT,
-    preference: argv.preference === 'best'
-      ? google.maps.StreetViewPreference.BEST
-      : google.maps.StreetViewPreference.NEAREST,
-    tiles: result.tiles,
-    radius: argv.radius,
-    crossOrigin: 'Anonymous',
-    zoom: Math.min(MAX_ZOOM, zoom)
-  }).on('complete', function (canvas) {
-    var format = /jpe?g/i.test(argv.format) ? 'image/jpeg' : 'image/png';
-    var buffer = toBuffer(canvas, format, argv.quality);
-    write(buffer).catch(fail).then(() => window.close());
+parseLocation()
+  .then(location => extract(location))
+  .catch(fail);
+
+function parseLocation () {
+  return new Promise((resolve, reject) => {
+    var latLon = argv._[0];
+    if (latLon) {
+      if (latLon === 'current') {
+        if (!navigator.geolocation) {
+          return reject(new Error('No geolocation support!'));
+        }
+        navigator.geolocation.getCurrentPosition(pos => {
+          const coords = pos.coords;
+          resolve([ coords.latitude, coords.longitude ]);
+        }, () => {
+          reject(new Error('Could not geolocate current position.'));
+        }, {
+          timeout: 10000
+        });
+        return;
+      }
+
+      // try to parse a URL
+      var regex = /(?:google\..*maps\/\@)([0-9\-\.]+)\,([0-9\-\.]+)/i;
+      var match = regex.exec(latLon);
+      if (match) {
+        latLon = [ match[1], match[2] ];
+      } else {
+        latLon = latLon.split(',').slice(0, 2).map(n => parseFloat(n));
+      }
+    } else {
+      latLon = awesome();
+    }
+    resolve(latLon);
   });
-});
+}
+
+function extract (location) {
+  googlePano(location, function (err, result) {
+    if (err) throw err;
+    render(result.id, {
+      source: argv.source === 'outdoor'
+        ? google.maps.StreetViewSource.OUTDOOR
+        : google.maps.StreetViewSource.DEFAULT,
+      preference: argv.preference === 'best'
+        ? google.maps.StreetViewPreference.BEST
+        : google.maps.StreetViewPreference.NEAREST,
+      tiles: result.tiles,
+      radius: argv.radius,
+      crossOrigin: 'Anonymous',
+      zoom: Math.min(MAX_ZOOM, zoom)
+    }).on('complete', function (canvas) {
+      var format = /jpe?g/i.test(argv.format) ? 'image/jpeg' : 'image/png';
+      var buffer = toBuffer(canvas, format, argv.quality);
+      write(buffer).catch(fail).then(() => window.close());
+    });
+  });
+}
 
 function write (buf) {
   return new Promise(function (resolve, reject) {
@@ -76,8 +103,7 @@ function write (buf) {
 }
 
 function fail (err) {
-  process.stderr.write(err.message + '\n');
-  process.exit(1);
+  process.stderr.write(err.stack + '\n', () => process.exit(1));
 }
 
 function absolute (file) {
