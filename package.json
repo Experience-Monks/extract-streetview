@@ -1,6 +1,6 @@
 {
   "name": "extract-streetview",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "extract street view spherical images and depth information",
   "main": "index.js",
   "bin": {
@@ -20,8 +20,7 @@
     "google-panorama-equirectangular": "^1.2.0",
     "minimist": "^1.2.0"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "scripts": {
     "example": "node cmd.js 43.6473963,-79.3923407 -o image.png"
   },
