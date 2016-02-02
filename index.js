@@ -35,7 +35,7 @@ parseLocation()
 
 function parseLocation () {
   return new Promise((resolve, reject) => {
-    var latLon = argv._[0];
+    var latLon = process.argv[2];
     if (latLon) {
       if (latLon === 'current') {
         if (!navigator.geolocation) {
