@@ -1,6 +1,6 @@
 {
   "name": "extract-streetview",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "extract street view spherical images and depth information",
   "main": "index.js",
   "bin": {
