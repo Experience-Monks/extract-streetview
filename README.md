@@ -64,6 +64,7 @@ Options:
   --source, -s      photo source, "outdoor" or "default"
   --format, -f      output format, "jpg" or "png" (default)
   --quality, -q     encoding quality for JPG, default 0.9
+  --id              the first argument is a panoID instead of lat,lng
 ```
 
 Extracts a street view panorama from `[ latitude, longitude ]` input (or `google.com/maps/` URL). If not specified, will extract a random [Awesome StreetView](https://github.com/Jam3/awesome-streetview). 
