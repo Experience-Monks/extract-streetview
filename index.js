@@ -3,6 +3,7 @@ var awesome = require('awesome-streetview');
 var toBuffer = require('electron-canvas-to-buffer');
 var render = require('google-panorama-equirectangular');
 var googlePano = require('google-panorama-by-location');
+var googlePanoById = require('google-panorama-by-id');
 var fs = require('fs');
 var path = require('path');
 var MAX_ZOOM = 4;
@@ -17,6 +18,7 @@ var argv = require('minimist')(process.argv.slice(2), {
     format: 'f',
     quality: 'q'
   },
+  boolean: [ 'id' ],
   string: [ 'format', 'source', 'preference', 'output' ]
 });
 
@@ -36,6 +38,11 @@ parseLocation()
 function parseLocation () {
   return new Promise((resolve, reject) => {
     var latLon = process.argv[2];
+    if (argv.id) {
+      if (!latLon) return reject(new Error('Must specify panoID with --id option'));
+      return resolve(latLon);
+    }
+
     if (latLon) {
       if (latLon === 'current') {
         if (!navigator.geolocation) {
@@ -68,19 +75,25 @@ function parseLocation () {
 }
 
 function extract (location) {
-  googlePano(location, function (err, result) {
+  var extractZoom = Math.min(MAX_ZOOM, zoom);
+  var opts = {
+    zoom: extractZoom,
+    source: argv.source === 'outdoor'
+      ? google.maps.StreetViewSource.OUTDOOR
+      : google.maps.StreetViewSource.DEFAULT,
+    preference: argv.preference === 'best'
+      ? google.maps.StreetViewPreference.BEST
+      : google.maps.StreetViewPreference.NEAREST,
+    radius: argv.radius
+  };
+
+  var request = argv.id ? googlePanoById : googlePano;
+  request(location, opts, function (err, result) {
     if (err) throw err;
     render(result.id, {
-      source: argv.source === 'outdoor'
-        ? google.maps.StreetViewSource.OUTDOOR
-        : google.maps.StreetViewSource.DEFAULT,
-      preference: argv.preference === 'best'
-        ? google.maps.StreetViewPreference.BEST
-        : google.maps.StreetViewPreference.NEAREST,
       tiles: result.tiles,
-      radius: argv.radius,
       crossOrigin: 'Anonymous',
-      zoom: Math.min(MAX_ZOOM, zoom)
+      zoom: zoom
     }).on('complete', function (canvas) {
       var format = /jpe?g/i.test(argv.format) ? 'image/jpeg' : 'image/png';
       var buffer = toBuffer(canvas, format, argv.quality);
